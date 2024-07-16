@@ -4,6 +4,7 @@ type Todo = {
   readonly id: number
   value: string
   checked: boolean
+  removed: boolean
 };
 
 export const App = () => {
@@ -47,11 +48,24 @@ export const App = () => {
     })
   }
 
+  const handleRemoved = (removed: boolean, id: number) => {
+    setTodos((todos) => {
+      const newTodos = todos.map((todo) => {
+        if (todo.id === id)  {
+          return {...todo, removed}
+        }
+        return todo
+      })
+      return newTodos
+    })
+  }
+
   const handleSubmit = () => {
     const newTodo: Todo = {
       id: new Date().getTime(),
       value: text,
-      checked: false
+      checked: false,
+      removed: false,
     }
     // set関数には関数を渡すことができる。その関数は前回のstateを引数に受け取ることができる。
     setTodos((todos) => [newTodo, ...todos])
@@ -73,8 +87,9 @@ export const App = () => {
         return (
           <li key={todo.id}>
             <input type="checkbox" checked={todo.checked} onChange={() => {handleCheckbox(!todo.checked, todo.id)}} />
-            <input type="text" value={todo.value} disabled={todo.checked} onChange={(e) => handleFormInput(e.target.value, todo.id)} />
+            <input type="text" value={todo.value} disabled={todo.checked || todo.removed} onChange={(e) => handleFormInput(e.target.value, todo.id)} />
             <button onClick={() => {handleDelete(todo.id)}}>削除</button>
+            <button onClick={() => {handleRemoved(!todo.removed, todo.id)}}>削除フラグ追加</button>
           </li>
       )})}
       </ul>
