@@ -38,6 +38,15 @@ export const App = () => {
     })
   }
 
+  const handleDelete = (id: number) => {
+    setTodos((todos) => {
+      const newTodos = todos.filter((todo) => {
+        return todo.id != id
+      })
+      return newTodos
+    })
+  }
+
   const handleSubmit = () => {
     const newTodo: Todo = {
       id: new Date().getTime(),
@@ -65,6 +74,7 @@ export const App = () => {
           <li key={todo.id}>
             <input type="checkbox" checked={todo.checked} onChange={() => {handleCheckbox(!todo.checked, todo.id)}} />
             <input type="text" value={todo.value} disabled={todo.checked} onChange={(e) => handleFormInput(e.target.value, todo.id)} />
+            <button onClick={() => {handleDelete(todo.id)}}>削除</button>
           </li>
       )})}
       </ul>
