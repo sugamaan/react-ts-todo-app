@@ -3,6 +3,7 @@ import { useState } from "react";
 type Todo = {
   readonly id: number
   value: string
+  checked: boolean
 };
 
 export const App = () => {
@@ -25,11 +26,23 @@ export const App = () => {
       return newTodos
     })
   }
+  const handleCheckbox = (checked: boolean, id: number) => {
+    setTodos((todos) =>{
+      const newTodos = todos.map((todo) =>{
+        if (todo.id === id) {
+          return {...todo, checked: checked}
+        }
+        return todo
+      })
+      return newTodos
+    })
+  }
 
   const handleSubmit = () => {
     const newTodo: Todo = {
       id: new Date().getTime(),
-      value: text
+      value: text,
+      checked: false
     }
     // set関数には関数を渡すことができる。その関数は前回のstateを引数に受け取ることができる。
     setTodos((todos) => [newTodo, ...todos])
@@ -50,7 +63,8 @@ export const App = () => {
       {todos.map((todo) => {
         return (
           <li key={todo.id}>
-            <input type="text" value={todo.value} onChange={(e) => handleFormInput(e.target.value, todo.id)} />
+            <input type="checkbox" checked={todo.checked} onChange={() => {handleCheckbox(!todo.checked, todo.id)}} />
+            <input type="text" value={todo.value} disabled={todo.checked} onChange={(e) => handleFormInput(e.target.value, todo.id)} />
           </li>
       )})}
       </ul>
