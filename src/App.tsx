@@ -6,11 +6,21 @@ type Todo = {
 };
 
 export const App = () => {
-  const [text, setText] = useState("初期値")
+  const [text, setText] = useState("")
   const [todos, setTodos] = useState<Todo[]>([])
 
   const handleText = (e: React.ChangeEvent<HTMLInputElement>) =>{
     setText(e.target.value)
+  }
+
+  const handleFormInput = (value: string, id: number) => {
+    const newTodos = todos.map((todo) => {
+      if (id === todo.id) {
+        todo.value = value
+      }
+      return todo
+    })
+    setTodos(newTodos)
   }
 
   const handleSubmit = () => {
@@ -35,7 +45,7 @@ export const App = () => {
       <h2>記録されたタスク</h2>
       <ul>
       {todos.map((todo) => {
-        return <li key={todo.id}>{todo.value}</li>
+        return <input type="text" value={todo.value} onChange={(e) => handleFormInput(e.target.value, todo.id)} />
       })}
       </ul>
     </>
