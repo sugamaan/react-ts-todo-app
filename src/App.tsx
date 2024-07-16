@@ -7,9 +7,12 @@ type Todo = {
   removed: boolean
 };
 
+type Filter = 'all' | 'checked' | 'unchecked' | 'removed'
+
 export const App = () => {
   const [text, setText] = useState("")
   const [todos, setTodos] = useState<Todo[]>([])
+  const [filter, setFilter] = useState<Filter>('all')
 
   const handleText = (e: React.ChangeEvent<HTMLInputElement>) =>{
     setText(e.target.value)
@@ -60,6 +63,25 @@ export const App = () => {
     })
   }
 
+  const handleSelect = (filter: Filter) => {
+    setFilter(filter)
+  }
+
+  const filteredTodos = todos.filter((todo) =>{
+      switch (filter) {
+        case 'all':
+          return todo
+        case 'checked':
+          return todo.checked
+        case 'unchecked':
+          return !todo.checked && !todo.removed
+        case 'removed':
+          return todo.removed
+      default:
+        return todo
+      }
+   })
+
   const handleSubmit = () => {
     const newTodo: Todo = {
       id: new Date().getTime(),
@@ -74,6 +96,12 @@ export const App = () => {
 
   return (
     <>
+      <select defaultValue='all' onChange={(e) => {handleSelect(e.target.value as Filter)}}>
+        <option value='all'>全て</option>
+        <option value='checked'>完了</option>
+        <option value='removed'>ゴミ箱</option>
+        <option value='unchecked'>進行中</option>
+      </select>
       <form onSubmit={(e) => {
         e.preventDefault(); 
         handleSubmit();
@@ -83,7 +111,7 @@ export const App = () => {
       </form>
       <h2>記録されたタスク</h2>
       <ul>
-      {todos.map((todo) => {
+      {filteredTodos.map((todo) => {
         return (
           <li key={todo.id}>
             <input type="checkbox" checked={todo.checked} onChange={() => {handleCheckbox(!todo.checked, todo.id)}} />
